@@ -1,3 +1,3 @@
-dependencies/lib
-export/thb-comm
-.vscode
+dependencies/lib/
+export/thb-comm/
+.vscode/
