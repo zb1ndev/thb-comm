@@ -6,6 +6,7 @@
 #include "thbc-viewer.h"
 
 #define THBC_MAXIMUM_CONFIG_KVPS                        47
+#define THBC_DEFAULT_CONFIG_VALUE_SIZE                  KB
 
 typedef struct thbc_server_t thbc_server_t;
 typedef struct thbc_viewer_state_t thbc_viewer_state_t;
@@ -20,7 +21,7 @@ struct thbc_config_t {
     
     atomic_bool read_lock;
 
-    thbc_kvp data[THBC_MAXIMUM_CONFIG_KVPS];
+    thbc_kvp_t data[THBC_MAXIMUM_CONFIG_KVPS];
     size_t data_size;
 
 };

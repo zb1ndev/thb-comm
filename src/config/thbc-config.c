@@ -30,8 +30,54 @@ char* thbc_config_get_value(char* key) {
 
 internal int thbc_config_set_value(char* key, char* value) {
 
-    // TODO: Find or Create kvp based on key and allocate space for value then copy
+    thbc_kvp_t* pair = NULL;
+    size_t value_len = strlen(value);
+    size_t size = THBC_DEFAULT_CONFIG_VALUE_SIZE;
 
+    for (size_t i = 0; i < global_configuration->data_size; i++) {
+        if (strcmp(key, global_configuration->data[i].key) == 0){
+            pair = &global_configuration->data[i];
+            break;
+        }
+    }
+
+    if (pair == NULL) {
+        
+        pair = &global_configuration->data[global_configuration->data_size++];
+        pair->key = calloc(strlen(key) + 1, sizeof(char));
+        if (pair->key == NULL) {
+            perror("thbc_config_set_value: calloc");
+            return -1;
+        }
+
+        memcpy(pair->key, key, strlen(key));
+
+        if (size < value_len) 
+            size = value_len;
+
+        pair->value = calloc(size + 1, sizeof(char));
+        if (pair->value == NULL) {
+            perror("thbc_config_set_value: calloc");
+            return -1;
+        }
+
+        memcpy(pair->value, value, value_len);
+        return 0;
+
+    }
+
+    if (size < value_len) {
+        size = value_len;
+        free(pair->value);
+    } 
+
+    pair->value = calloc(size + 1, sizeof(char));
+    if (pair->value == NULL) {
+        perror("thbc_config_set_value: calloc");
+        return -1;
+    }
+
+    memcpy(pair->value, value, value_len);
     return 0;
 
 }
@@ -41,12 +87,12 @@ internal void thbc_config_update(thbc_config_t* config, char* data, size_t data_
     char* config_file = LoadFileText("./resources/thbc.config");
     size_t config_file_size = strlen(config_file);
         
-    // TODO: Parse kvps and load them into the config
+    // TODO: load kvps from file
 
     if (data == NULL || data_length == 0)
         return; // Exit early, there is no more work to do
 
-    // TODO: Parse config format into kvps
+    // TODO: load kvps from data
 
 }
 

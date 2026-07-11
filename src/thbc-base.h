@@ -21,10 +21,10 @@
 #define local_persist   static
 #define global          static
 
-typedef struct thbc_kvp thbc_kvp;
-struct thbc_kvp {
+typedef struct thbc_kvp_t thbc_kvp_t;
+struct thbc_kvp_t {
     char *key, *value;
 };
-#define empty_thbc_kvp                                  (thbc_kvp){0}
+#define empty_thbc_kvp_t                                  (thbc_kvp_t){0}
 
 #endif // THBC_BASE
