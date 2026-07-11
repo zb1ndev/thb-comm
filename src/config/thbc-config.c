@@ -55,7 +55,7 @@ int thbc_config_load(thbc_viewer_state_t* viewer_state, thbc_server_t* server) {
     bool first_load = false;
     thbc_config_t* temp = global_configuration;
 
-    // NOTE: Only gets ran once before server startup
+    // NOTE(Joel Zbinden): Only gets ran once before server startup
     if (global_configuration == NULL) {
         
         temp = calloc(1, sizeof(thbc_config_t));

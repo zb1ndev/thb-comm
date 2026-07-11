@@ -75,11 +75,10 @@ internal int thbc_load_viewer_resources(thbc_viewer_state_t* viewer_state, thbc_
         goto fail;
     }
 
-    // We only use it with a 0.5f scale factor, so just pre-compute it
+    // NOTE(Joel Zbinden): We only use it with a 0.5f scale factor, so just pre-compute it
     viewer_state->logo_width  = (int)(viewer_state->logo.width  / 2);
     viewer_state->logo_height = (int)(viewer_state->logo.height / 2);
 
-    // Load roboto font
     viewer_state->font = LoadFontEx("./resources/jetbrains.ttf", 32, NULL, 0);
     if (!IsFontValid(viewer_state->font)) {
         perror("thbc_load_viewer_resources: LoadFont");
@@ -123,7 +122,7 @@ internal Rectangle thbc_get_quadrant_bounds(thbc_viewer_state_t* viewer_state, i
     const int HALF_HEIGHT       = (render_height / 2);
     const int HALF_WIDTH        = (render_width / 2);
 
-    // Maximum of 4 Quadrants lol (aaron joke haha)
+    // NOTE(Joel Zbinden): Maximum of 4 Quadrants lol (aaron joke haha)
     if (quadrant >= 4) quadrant = 4;
     if (quadrant <= 0) quadrant = 0;
 

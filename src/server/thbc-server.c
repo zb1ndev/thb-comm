@@ -48,7 +48,6 @@ internal int thbc_load_pages(thbc_server_t* server) {
         return -1;
     } 
 
-    // TODO: Make an internal function for loading pages
     (void)memset(path, 0, wd_length + THBC_LONGEST_RESOURCE_NAME);
     if (sprintf(path, "%s/resources/thb-comm-app.html", wd) < 0) {
         perror("thbc_start_server: sprintf");

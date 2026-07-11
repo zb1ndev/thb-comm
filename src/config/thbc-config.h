@@ -13,7 +13,7 @@ typedef struct thbc_viewer_state_t thbc_viewer_state_t;
 typedef struct thbc_config_t thbc_config_t;
 struct thbc_config_t {
 
-    // VIEWER FACING: If read lock is on, the server has control
+    // NOTE(Joel Zbinden): VIEWER FACING: If read lock is on, the server has control
     // once the server releases control, the viewer can update its
     // slides with the new data and give control back to the server
     // once finished.

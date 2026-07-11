@@ -8,8 +8,7 @@ int thbc_viewer_init(thbc_viewer_state_t* viewer_state, thbc_server_t* server) {
     SetTargetFPS(60);
     HideCursor();
 
-    // Loading Last Server Resource
-    // Has to be done after GL initialization
+    // NOTE(Joel Zbinden): Loading Last Server Resource, has to be done after GL initialization
     char lan_server_url[INET_ADDRSTRLEN + sizeof(":XXXX")] = {0};
     if (sprintf(lan_server_url, "http://%s:%d", server->ip_addr, server->http_server.port) < 0) {
         perror("thbc_init_viewer: sprintf");
@@ -91,8 +90,8 @@ void thbc_viewer_close(thbc_viewer_state_t* viewer_state, thbc_server_t* server)
     if (IsFontValid(viewer_state->font))
         UnloadFont(viewer_state->font);
 
-    // Have to unload textures before GL deinitialization
-    // So we unload the QR Code texture here instead of in server clean-up
+    // NOTE(Joel Zbinden): Have to unload textures before GL deinitialization,
+    // so we unload the QR Code texture here instead of in server clean-up
     if (IsTextureValid(server->ip_qr))
         UnloadTexture(server->ip_qr); 
 

@@ -16,7 +16,7 @@ struct thbc_slide_t {
 
     char *name, *image_path;
     Texture2D render_result;
-    thbc_slide_callback_t render; // If render is NULL and image_path is REAL, render image at path as slide 
+    thbc_slide_callback_t render; // NOTE(Joel Zbinden): If render is NULL and image_path is REAL, render image at path as slide 
 
 };
 #define empty_thbc_slide_t                              (thbc_slide_t){0}
