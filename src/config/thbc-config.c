@@ -28,28 +28,31 @@ char* thbc_config_get_value(char* key) {
 
 }
 
-internal int thbc_config_set_value(char* key, char* value) {
+internal int thbc_config_set_value(thbc_config_t* config, char* key, char* value) {
 
     thbc_kvp_t* pair = NULL;
     size_t value_len = strlen(value);
     size_t size = THBC_DEFAULT_CONFIG_VALUE_SIZE;
 
-    for (size_t i = 0; i < global_configuration->data_size; i++) {
-        if (strcmp(key, global_configuration->data[i].key) == 0){
-            pair = &global_configuration->data[i];
-            break;
+    printf("%s: %s\n", key, value);
+
+    for (size_t i = 0; i < config->data_size; i++) {
+        if (config->data[i].key != NULL) {
+            if (strcmp(key, config->data[i].key) == 0){
+                pair = &config->data[i];
+                break;
+            }
         }
     }
 
     if (pair == NULL) {
         
-        pair = &global_configuration->data[global_configuration->data_size++];
+        pair = &config->data[config->data_size++];
         pair->key = calloc(strlen(key) + 1, sizeof(char));
         if (pair->key == NULL) {
             perror("thbc_config_set_value: calloc");
             return -1;
         }
-
         memcpy(pair->key, key, strlen(key));
 
         if (size < value_len) 
@@ -82,17 +85,69 @@ internal int thbc_config_set_value(char* key, char* value) {
 
 }
 
-internal void thbc_config_update(thbc_config_t* config, char* data, size_t data_length) {
+internal void thbc_config_parse_quadrant_slides(thbc_config_t* config, char* data, size_t data_length, int id) {
 
-    char* config_file = LoadFileText("./resources/thbc.config");
-    size_t config_file_size = strlen(config_file);
+    char* walker = data;
+    int slide_counter = 0;
+    *(data + data_length + 1) = '\0';
+
+    do {
+
+        if (slide_counter + 1 > 10)
+            break;
+
+        char buf[64] = {0};
+        sprintf(buf, "quadrant_%d::%d", id, ++slide_counter);
+
+        char* value_start = strchr(walker, '"');
+        if (value_start == NULL)
+            break;
+        value_start++;
+
+        char* value_end = strchr(value_start, '"'); 
+        if (value_end == NULL)
+            break;
+        *value_end = '\0';
+
+        if (thbc_config_set_value(config, buf, value_start) < 0) {
+            perror("thbc_config_parse_quadrant_slides: thbc_config_set_value");
+            return;
+        }
+
+        walker = value_end + 1;
+
+    } while (true);
+    
+}
+
+// NOTE(Joel Zbinden): Ran by the server to update the config
+void thbc_config_update(thbc_config_t* config, char* data, size_t data_length) {
+
+    char* scratch = calloc(data_length + 1, sizeof(char));
+    if (scratch == NULL) {
+        perror("thbc_config_update: calloc");
+        return;
+    }
+    memcpy(scratch, data, data_length);
+
+    // TODO: Parse Default
+
+    char* quadrant_keys[4] = {
+        "quadrant_1", "quadrant_2",
+        "quadrant_3", "quadrant_4"
+    };
+
+    for (size_t i = 0; i < 4; i++) {
         
-    // TODO: load kvps from file
+        char* start = memmem(scratch, data_length, quadrant_keys[i], 10);
+        char* end = strchr(start, '}');
 
-    if (data == NULL || data_length == 0)
-        return; // Exit early, there is no more work to do
+        thbc_config_parse_quadrant_slides(config, start, end - start, i+1);
+    
+    }
+    
 
-    // TODO: load kvps from data
+    free(scratch);
 
 }
 
@@ -111,16 +166,18 @@ int thbc_config_load(thbc_viewer_state_t* viewer_state, thbc_server_t* server) {
         }
 
         first_load = true;
-        atomic_init(&temp->read_lock, true); // Give Server Control
-    
-    }
+        atomic_init(&temp->read_lock, true); // NOTE(Joel Zbinden): Give server control once finished initializing 
 
-    thbc_config_update(temp, NULL, 0);
+        char* config_file = LoadFileText("./resources/thbc.config");
+        size_t config_file_size = strlen(config_file);
+        thbc_config_update(temp, config_file, config_file_size);
+
+    }
     
     if (thbc_config_save() < 0) {
         perror("thbc_load_configuration: thbc_save_configuration");
         goto fail;
-    } 
+    }
 
     // TODO: Render Slides Here
 

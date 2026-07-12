@@ -34,6 +34,7 @@ thbc_config_t*          thbc_config_get                 (void);
 
 
 int                     thbc_config_load                (thbc_viewer_state_t* viewer_state, thbc_server_t* server);
+void                    thbc_config_update              (thbc_config_t* config, char* data, size_t data_length);
 void                    thbc_config_unload              (void);
 int                     thbc_config_save                (void);
 

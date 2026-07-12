@@ -7,6 +7,8 @@
 #include <stdbool.h>
 #include <stdatomic.h>
 #include <errno.h>
+#include <ctype.h>
+
 
 #include <raylib.h>
 #include <cframe.h>
