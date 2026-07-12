@@ -30,11 +30,11 @@ char* thbc_config_get_value(char* key) {
 
 internal int thbc_config_set_value(thbc_config_t* config, char* key, char* value) {
 
+    // TODO: If value is NULL, free the existing value and set the pointer to NULL 
+
     thbc_kvp_t* pair = NULL;
     size_t value_len = strlen(value);
     size_t size = THBC_DEFAULT_CONFIG_VALUE_SIZE;
-
-    printf("%s: %s\n", key, value);
 
     for (size_t i = 0; i < config->data_size; i++) {
         if (config->data[i].key != NULL) {
@@ -69,10 +69,9 @@ internal int thbc_config_set_value(thbc_config_t* config, char* key, char* value
 
     }
 
-    if (size < value_len) {
+    if (size < value_len)
         size = value_len;
-        free(pair->value);
-    } 
+    free(pair->value);
 
     pair->value = calloc(size + 1, sizeof(char));
     if (pair->value == NULL) {
